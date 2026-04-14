@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank Marketing</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #667eea;
+            padding: 20px;
+        }
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .back-btn {
+            background: #666;
+            margin-top: 10px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .note {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🏦 Term Deposit Prediction</h2>
+        
+        <form id="form">
+            <label>📊 Age (18-80)</label>
+            <input type="number" id="age" placeholder="e.g., 35" required>
+            
+            <label>💼 Job Type</label>
+            <select id="job" required>
+                <option value="0">Admin</option>
+                <option value="1">Blue-Collar</option>
+                <option value="2">Management</option>
+                <option value="3">Retired</option>
+                <option value="4">Student</option>
+            </select>
+            
+            <label>💰 Account Balance (Euros)</label>
+            <input type="number" id="balance" placeholder="e.g., 1500" required>
+            
+            <label>🏠 Housing Loan</label>
+            <select id="housing" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+            
+            <label>📞 Call Duration (seconds)</label>
+            <input type="number" id="duration" placeholder="e.g., 300" required>
+            
+            <label>📅 Previous Contacts</label>
+            <input type="number" id="previous" placeholder="e.g., 0, 1, 2" required>
+            
+            <button type="submit">🔮 Predict Now</button>
+        </form>
+        
+        <div id="result" class="result" style="display:none"></div>
+        
+        <button class="back-btn" onclick="location.href='/'">← Back to Home</button>
+        <div class="note">💡 Higher balance & longer call duration = More likely to subscribe</div>
+    </div>
+    
+    <script>
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            // Simple values for other fields
+            const formData = new FormData();
+            formData.append('age', document.getElementById('age').value);
+            formData.append('job', document.getElementById('job').value);
+            formData.append('marital', '1');  // married (default)
+            formData.append('education', '2'); // tertiary (default)
+            formData.append('balance', document.getElementById('balance').value);
+            formData.append('housing', document.getElementById('housing').value);
+            formData.append('loan', '0');  // no loan (default)
+            formData.append('duration', document.getElementById('duration').value);
+            formData.append('campaign', '2'); // average (default)
+            formData.append('pdays', '-1'); // no previous contact (default)
+            formData.append('previous', document.getElementById('previous').value);
+            
+            const res = await fetch('/predict_bank', {method: 'POST', body: formData});
+            const data = await res.json();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            
+            if(data.result.includes('Subscribe')) {
+                resultDiv.innerHTML = `
+                    <h3>✅ ${data.result}</h3>
+                    <p>Confidence: ${data.confidence}</p>
+                    <p>🎉 Customer will likely buy term deposit!</p>
+                `;
+                resultDiv.style.background = '#d4edda';
+                resultDiv.style.color = '#155724';
+            } else {
+                resultDiv.innerHTML = `
+                    <h3>❌ ${data.result}</h3>
+                    <p>Confidence: ${data.confidence}</p>
+                    <p>😔 Customer may not buy term deposit</p>
+                `;
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+            }
+        };
+    </script>
+</body>
+</html>
