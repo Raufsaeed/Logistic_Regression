@@ -37,7 +37,7 @@ Predict whether a customer will subscribe to a **term deposit** (Yes/No)
 2. Balance (account balance)
 3. Previous contacts
 4. Age
-![Uploading image.png…]()
+
 
 ---
 
